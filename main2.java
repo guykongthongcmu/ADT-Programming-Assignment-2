@@ -9,7 +9,10 @@ import java.util.Timer;
 
 public class main2 {
     public static void main(String[] args) throws IOException{
-        File f = new File("/Users/guykongthong/Desktop/cmu work/year1term2/adt/programming assignment/assignment_2/input1.txt");
+        Scanner userInput = new Scanner(System.in);
+        System.out.println("Enter file path:  ");
+        String filePath = userInput.nextLine();
+        File f = new File(filePath);
         Scanner readFile = new Scanner(f);
         String line = " ", word;
         int palindrome = 0, totalCharCount = 0, emoticons = 0, tokens = 0, longestTok = 0, tempLongestTok = 0, lines = 0;
@@ -62,8 +65,9 @@ public class main2 {
         System.out.println("The longest token was " + longestTok + " The average token size is " + avgTokenSize(tokenSize));
         System.out.println("Total time to execute the program: " + second + " secs");
         System.out.println("Program terminated!");
-
+        
         readFile.close();
+        System.exit(0);
         
     }
 
