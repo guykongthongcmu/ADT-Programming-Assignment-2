@@ -1,11 +1,7 @@
 // 672115045 Virawit Kongthong ADT Programming Assignment 2
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.StringTokenizer;
-import java.util.Timer;
+import java.io.*;
+import java.util.*;
 
 public class main2 {
     public static void main(String[] args) throws IOException{
@@ -13,12 +9,11 @@ public class main2 {
         System.out.println("Enter file path:  ");
         String filePath = userInput.nextLine();
         File f = new File(filePath);
-        Scanner readFile = new Scanner(f);
-        String line = " ", word;
-        int palindrome = 0, totalCharCount = 0, emoticons = 0, tokens = 0, longestTok = 0, tempLongestTok = 0, lines = 0;
-        ArrayList<Integer> tokenSize = new ArrayList<Integer>();
-        ArrayList<String> listOfEmoticons = new ArrayList<String>();
+        BufferedReader readFile = new BufferedReader(new FileReader(f));
 
+        String line = "";
+        int palindrome = 0, totalCharCount = 0, emoticons = 0, tokens = 0, longestTok = 0, lines = 0, tokenSize = 0;
+        HashSet<String> listOfEmoticons = new HashSet<>();
         listOfEmoticons.add(":(");
         listOfEmoticons.add(":)");
         listOfEmoticons.add(":D");
@@ -33,25 +28,16 @@ public class main2 {
 
         Timer time = new Timer();
         long startTime = System.nanoTime();
-        while (readFile.hasNextLine()) {
-            line = readFile.nextLine();
-            totalCharCount += line.length() ;
+        while ((line = readFile.readLine()) != null) {
+            totalCharCount += line.length();
             lines++;
-            StringTokenizer token = new StringTokenizer(line, " ");
-            while (token.hasMoreTokens()) {
-                word = token.nextToken();
+            String[] words = line.split("\\s+");
+            for (String word : words) {
                 tokens++;
-                if (isPalindrome(word)) {
-                    palindrome++;
-                }
-                if (isEmoticon(listOfEmoticons, word)) {
-                    emoticons++;
-                }
-                tokenSize.add(word.length());
-                tempLongestTok = word.length();
-                if (longestTok < tempLongestTok) {
-                    longestTok = tempLongestTok;
-                }
+                palindrome += isPalindrome(word);
+                emoticons += isEmoticon(listOfEmoticons, word);
+                tokenSize += word.length();
+                longestTok = Math.max(longestTok, word.length());
             }
         }
         long endTime = System.nanoTime();
@@ -62,7 +48,7 @@ public class main2 {
         System.out.println("Total Number of Tokens: " + tokens);
         System.out.println("Total number of emoticons: " + emoticons);
         System.out.println("Total # of New Lines: " + lines);
-        System.out.println("The longest token was " + longestTok + " The average token size is " + avgTokenSize(tokenSize));
+        System.out.println("The longest token was " + longestTok + " The average token size is " + (tokenSize / tokens));
         System.out.println("Total time to execute the program: " + second + " secs");
         System.out.println("Program terminated!");
         
@@ -71,39 +57,21 @@ public class main2 {
         
     }
 
-    public static boolean isPalindrome(String word) {
-        String temp = "";
-        boolean isPal = false;
-
-        for (int i = word.length(); i > 0; i--) {
-            temp += word.charAt(i-1);
-        }
-        if (temp.equals(word)) {
-            isPal = true;
-            return isPal;
-        } else {
-            return isPal;
-        }
-    }
-
-    public static double avgTokenSize(ArrayList<Integer> size) {
-        double avg = 0;
-        for (int i = 0; i < size.size(); i++) {
-            avg += size.get(i);
-        }
-        avg /= size.size();
-        return avg;
-    }
-
-    public static boolean isEmoticon(ArrayList<String> emoticon, String phrase) {
-        boolean isEmoji = false;
-        for (int i = 0; i < emoticon.size(); i++) {
-            if ((emoticon.get(i)).equals(phrase)) {
-                isEmoji = true;
+    public static int isPalindrome(String word) {
+        int left = 0, right = word.length() - 1;
+        while (left < right) {
+            if (word.charAt(left) != word.charAt(right)) {
+                return 0;
             }
+            left++;
+            right--;
         }
-        return isEmoji;
-     }
+        return 1;
+    }
+
+    public static int isEmoticon(HashSet<String> emoticon, String phrase) {
+        return emoticon.contains(phrase) ? 1 : 0;
+    }
 }
 
 
